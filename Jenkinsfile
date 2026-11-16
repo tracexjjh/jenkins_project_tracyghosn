@@ -31,9 +31,21 @@ pipeline {
             }
         }
 
+        stage('Coverage') {
+            steps {
+                sh "source ${VIRTUAL_ENV}/bin/activate && coverage run -m unittest discover -s tests -v && coverage report"
+            }
+        }
+
+        stage('Security Scan') {
+            steps {
+                sh "source ${VIRTUAL_ENV}/bin/activate && bandit -r app.py -ll"
+            }
+        }
+
         stage('Deploy') {
             steps {
-                echo "Deploying application..."
+                sh 'chmod +x deploy.sh && ./deploy.sh'
             }
         }
     }
